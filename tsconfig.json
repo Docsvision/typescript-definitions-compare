@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6", 
+    "module": "umd",
+    "removeComments": false,
+    "sourceMap": true
+  },
+  "compileOnSave": true,
+  "include": [
+    "./run.ts",
+    "./utils/**/*.ts"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+	"verbose": false,
+	"previous": "./json/release.json",
+	"next": "./json/current.json",
+	"flatOut": "outFlat.txt",
+	"out": "out.txt",
+	"ignore": "./ignore.json",
+	"excludeRootNode": true
+}

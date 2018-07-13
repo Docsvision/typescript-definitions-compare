@@ -1,0 +1,31 @@
+{
+  "name": "typescript-definitions-compare",
+  "version": "0.1.0",
+  "description": "Checks backward compability of two versions of typescript sources.",
+  "main": "compare.js",
+  "scripts": {
+    "build:current": "typedoc --mode file --includeDeclarations --excludePrivate --excludeExternals --ignoreCompilerErrors --json ./json/current.json --tsconfig current/tsconfig.json",
+    "build:release": "typedoc --mode file --includeDeclarations --excludePrivate --excludeExternals --ignoreCompilerErrors --json ./json/release.json --tsconfig release/tsconfig.json",
+    "run": "node ./run.js"
+  },
+  "bin": {
+    "typedc": "./run.js"
+  },
+  "author": "Docsvision",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^10.5.2",
+    "camelcase": "^5.0.0",
+    "command-line-args": "^5.0.2",
+    "command-line-usage": "^5.0.5",
+    "minimatch": "^3.0.4",
+    "typedoc": "^0.11.1"
+  },
+  "devDependencies": {
+    "@types/camelcase": "^4.1.0",
+    "@types/command-line-args": "^5.0.0",
+    "@types/command-line-usage": "^5.0.1",
+    "@types/minimatch": "^3.0.3",
+    "parcel-bundler": "^1.9.4"
+  }
+}
