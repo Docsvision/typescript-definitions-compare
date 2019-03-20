@@ -1,12 +1,13 @@
 {
   "name": "typescript-definitions-compare",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Checks backward compability of two versions of typescript sources.",
   "main": "compare.js",
   "scripts": {
     "build:current": "typedoc --mode file --includeDeclarations --excludePrivate --excludeExternals --ignoreCompilerErrors --json ./json/current.json --tsconfig current/tsconfig.json",
     "build:release": "typedoc --mode file --includeDeclarations --excludePrivate --excludeExternals --ignoreCompilerErrors --json ./json/release.json --tsconfig release/tsconfig.json",
     "run": "node ./run.js"
+    
   },
   "bin": {
     "typedc": "./run.js"
