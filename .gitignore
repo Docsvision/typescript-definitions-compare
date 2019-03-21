@@ -1,2 +1,6 @@
 .vscode
 .cache
+node_modules
+ccheck
+*.js
+*.map

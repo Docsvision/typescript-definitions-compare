@@ -5,7 +5,7 @@ export interface DeclarationNode<Kind = KindString> {
     path?: DeclarationNode[];
     type?: DeclarationType;
     kindString?: Kind;
-    flags?: { isProtected: Boolean, isOptional: Boolean };
+    flags?: { isProtected: Boolean, isOptional: Boolean, isExported: Boolean };
     inheritedFrom?: { name: string };
     signatures?: DeclarationNode<"Call signature">[];
     parameters?: DeclarationNode<"Parameter">[];

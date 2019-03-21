@@ -11,14 +11,34 @@
     Object.defineProperty(exports, "__esModule", { value: true });
     const node_operations_1 = require("./node-operations");
     const compare_signatures_1 = require("./compare-signatures");
-    function checkCompability(oldNode, newNode, log) {
+    function checkCompability(oldNodes, newNodes, log, comparePaths) {
+        let number = 0;
+        let lastPercent = 0;
+        for (let oldNode of oldNodes) {
+            let newNode = newNodes.find(x => x.name == oldNode.name &&
+                (!comparePaths || node_operations_1.pathsEqual(x.path, oldNode.path)));
+            if (!newNode) {
+                log.nodeNotFound(oldNode);
+            }
+            else {
+                compare_signatures_1.checkSignaturesCompatible(oldNode, newNode, log);
+                checkCompabilityRec(oldNode, newNode, log);
+            }
+            number++;
+            let percent = Math.round((number / oldNodes.length) * 100);
+            if (percent - lastPercent >= 10) {
+                console.info(percent + "% complete");
+                lastPercent = percent;
+            }
+        }
+    }
+    exports.checkCompability = checkCompability;
+    function checkCompabilityRec(oldNode, newNode, log) {
         log.verbose(log.nodeWithPathToString(oldNode, true));
         if (oldNode.children) {
-            let number = 0;
-            let lastPercent = 0;
             for (let oldChildNode of oldNode.children) {
                 oldChildNode.path = oldNode.path && [...oldNode.path, oldNode] || oldChildNode.path;
-                let newChildNode = newNode.children && newNode.children.find(x => x.name == oldChildNode.name && node_operations_1.pathsEqual(x.path, oldChildNode.path));
+                let newChildNode = newNode.children && newNode.children.find(x => x.name == oldChildNode.name);
                 if (!newChildNode && newNode.kindString == "Type alias") {
                     let refName = newNode.type.name;
                     let refNode = node_operations_1.findNodeByNameRec(newNode.path[0], refName);
@@ -29,19 +49,11 @@
                 }
                 else {
                     compare_signatures_1.checkSignaturesCompatible(oldChildNode, newChildNode, log);
-                    checkCompability(oldChildNode, newChildNode, log);
-                }
-                number++;
-                if (!oldNode.path) {
-                    let percent = Math.round((number / oldNode.children.length) * 100);
-                    if (percent - lastPercent >= 10) {
-                        console.info(percent + "% complete");
-                        lastPercent = percent;
-                    }
+                    checkCompabilityRec(oldChildNode, newChildNode, log);
                 }
             }
         }
     }
-    exports.checkCompability = checkCompability;
+    exports.checkCompabilityRec = checkCompabilityRec;
 });
 //# sourceMappingURL=check-compability.js.map

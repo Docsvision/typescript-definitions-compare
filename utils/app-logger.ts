@@ -36,7 +36,7 @@ export class AppLogger {
         const errorType = ErrorType.NodeNotFound;
         this.printGrouped(node, ErrorType.NodeNotFound, 
             (nodeStr, isGlobal) => {
-                return this.getFlatNodeError(errorType, nodeStr);
+                return this.getFlatNodeError(errorType, nodeStr, node);
             },
             (nodeStr, isGlobal) => {
                 if (isGlobal) {
@@ -54,7 +54,7 @@ export class AppLogger {
         const errorType = ErrorType.AddedNotOptionalParam;
         let node = paramNode;
         this.printGrouped(node, errorType, (nodeStr, isGlobal) => {
-                return this.getFlatNodeError(errorType, nodeStr);
+                return this.getFlatNodeError(errorType, nodeStr, node);
             },
             (nodeStr, isGlobal) => {
                 return this.ident + this.getNodeErrorRow(errorType, nodeStr) + ' (added not optional parameter)';
@@ -66,7 +66,7 @@ export class AppLogger {
         const errorType = ErrorType.ChangedParamType;
         let node = paramNode;
         this.printGrouped(node, errorType, (nodeStr, isGlobal) => {
-                let data = this.getFlatNodeError(errorType, nodeStr) as any;
+                let data = this.getFlatNodeError(errorType, nodeStr, node) as any;
                 data.oldType = this.nodeWithPathToString(oldType, true);
                 data.newType = this.nodeWithPathToString(newType, true);
                 data.incopablity = this.nodeWithPathToString(incopablity, true);
@@ -87,7 +87,7 @@ export class AppLogger {
         const errorType = ErrorType.ChangedReturnType;
         let node = paramNode;
         this.printGrouped(node, errorType, (nodeStr, isGlobal) => {
-                let data = this.getFlatNodeError(errorType, nodeStr) as any;
+                let data = this.getFlatNodeError(errorType, nodeStr, node) as any;
                 data.oldType = this.nodeWithPathToString(oldType, true);
                 data.newType = this.nodeWithPathToString(newType, true);
                 data.incopablity = this.nodeWithPathToString(incopablity, true);
@@ -163,8 +163,12 @@ export class AppLogger {
             return '[' + this.getErrorString(errorType) + '] ' + nodeStr;
     }
 
-    private getFlatNodeError(errorType: ErrorType, nodeStr: string) {
-        return { code: this.getErrorString(errorType), node: nodeStr };
+    private getFlatNodeError(errorType: ErrorType, nodeStr: string, node: DeclarationNode) {
+        let err = { code: this.getErrorString(errorType), node: nodeStr  } as any;
+        if (!!node.inheritedFrom) {
+            err.inherited = true;
+        }
+        return err;
     }
 
     public nodeWithPathToString(node: DeclarationNode, flat: boolean) {
@@ -185,7 +189,7 @@ export class AppLogger {
     private getGlobalNode(node: DeclarationNode) {
         let globalNode = node;
         let pathIndex = node.path && (node.path.length - 1) || 0;
-        while (pathIndex >= 0 && !isGlobalNode(globalNode)) {
+        while (pathIndex >= 0 && !isGlobalNode(globalNode, false)) {
             globalNode = node.path[pathIndex];
             pathIndex--;
         }
@@ -237,7 +241,7 @@ export class AppLogger {
             let match = true;
             for (let prop in rule) {
                 if (Object.getOwnPropertyDescriptor(rule, prop) && prop != "comment") {
-                    if (!nodeError[prop] || minimatch(nodeError[prop], rule[prop])) {
+                    if (!nodeError[prop] || !(nodeError[prop] == rule[prop] || typeof(rule[prop]) == "string" && minimatch(nodeError[prop], rule[prop]))) {
                         match = false;
                         break;
                     }
