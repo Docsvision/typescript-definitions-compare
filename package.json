@@ -1,6 +1,6 @@
 {
   "name": "typescript-definitions-compare",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Checks backward compability of two versions of typescript sources.",
   "main": "compare.js",
   "scripts": {
